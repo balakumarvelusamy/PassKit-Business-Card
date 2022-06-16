@@ -5,8 +5,8 @@
   "teamIdentifier": "QALYWQD245",
   "barcodes": [
     {
-      "message": "https://photos.theuniquecreations.com",
-      "altText": "Scan me",
+      "message": "https://contactpass.s3.ap-south-1.amazonaws.com/bala/bala.pkpass",
+      "altText": "Scan & Save",
       "format": "PKBarcodeFormatQR",
       "messageEncoding": "iso-8859-1"
     }
@@ -47,8 +47,13 @@
       },
       {
         "key": "back-role",
-        "label": "OCCUPATION",
+        "label": "Profession",
         "value": "Web Develper"
+      },
+      {
+        "key": "back-role",
+        "label": "Passion",
+        "value": "Photography"
       },
       {
         "key": "back-email",
