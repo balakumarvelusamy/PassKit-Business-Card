@@ -22,7 +22,7 @@
         "key": "header-name",
         "textAlignment": "PKTextAlignmentRight",
         "label": "Profession",
-        "value": "Software Engineer"
+        "value": "Software Engineer / Photograher"
       }
     ],
     "auxiliaryFields": [
@@ -48,12 +48,18 @@
       {
         "key": "back-role",
         "label": "Profession",
-        "value": "Web Develper"
+        "value": "Software Engineer"
       },
       {
         "key": "back-role",
         "label": "Passion",
         "value": "Photography"
+      },
+
+      {
+        "key": "back-contact",
+        "label": "Contact",
+        "value": " <a href=“tel:+1-502-210-8598>+1-5502-210-8598</a>"
       },
       {
         "key": "back-email",
