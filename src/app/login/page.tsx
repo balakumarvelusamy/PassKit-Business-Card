@@ -59,8 +59,9 @@ export default function LoginPage() {
             });
 
             const data = await res.json();
-
-            if (!res.ok) {
+            console.log("OTP API Response Data:", data);
+            if (!data.success) {
+                console.error("API Error Data:", data);
                 throw new Error(data.error || "Invalid OTP");
             }
 
@@ -69,7 +70,9 @@ export default function LoginPage() {
             router.refresh();
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
+            console.error("Verification Exception:", msg);
             setError(msg);
+        } finally {
             setLoading(false);
         }
     };

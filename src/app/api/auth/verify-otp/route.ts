@@ -24,6 +24,7 @@ export async function POST(request: Request) {
         try {
             const { payload } = await jwtVerify(pendingToken, JWT_SECRET);
             decoded = payload;
+            console.log("Decoded OTP:", decoded);
         } catch (err) {
             return NextResponse.json({ error: "OTP token is invalid or expired." }, { status: 400 });
         }
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
 
         // Set HTTP-only cookie
         const response = NextResponse.json({ success: true, message: "Logged in successfully" });
-
+        console.log("Auth Token:", token);
         // Log the user in
         response.cookies.set("auth_token", token, {
             httpOnly: true,
