@@ -81,7 +81,7 @@ export default function LoginPage() {
         <div className="login-container">
             <div className="login-card fade-in">
                 <div className="brand">
-                    <div className="logo-placeholder"></div>
+                    <div className="logo-placeholder"><img src="..//passkitapp.jpg" width="100" height="100" alt="PassKit Logo" /></div>
                     <h1>SSN PassKit</h1>
                 </div>
 
