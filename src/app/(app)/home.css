@@ -50,7 +50,7 @@
     background-color: var(--background);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    padding: 1.5rem;
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -118,7 +118,7 @@
     background-color: var(--background);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    padding: 1.5rem;
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -168,12 +168,12 @@
 .preview-container {
     display: flex;
     justify-content: center;
-    padding: 1rem;
+    padding: 0rem;
 }
 
 .pass-card {
     width: 100%;
-    max-width: 340px;
+    max-width: 370px;
     border-radius: 12px;
     color: #ffffff;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);

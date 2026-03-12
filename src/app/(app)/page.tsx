@@ -66,8 +66,8 @@ export default function HomePage() {
   return (
     <div className="home-container">
       <div className="home-header">
-        <h2>Create a Business Card Pass</h2>
-        <p>Fill out the details below to generate an Apple Wallet Business Card.</p>
+        <span className="text-2xl font-bold text-center font-bold">To Create a Business Card Pass</span>
+        <span className="text-center text-sm-600 font-italic"> Fill out the details below to generate an Apple Wallet Business Card.</span>
       </div>
 
       <div className="pass-workspace">

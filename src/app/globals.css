@@ -66,7 +66,7 @@ button {
 
 .app-main {
   flex: 1;
-  padding: 1.5rem;
+  padding: 0.5rem;
   padding-bottom: 5rem;
   /* Space for fixed footer */
   max-width: 800px;
