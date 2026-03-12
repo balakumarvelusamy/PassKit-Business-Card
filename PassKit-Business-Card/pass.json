@@ -21,8 +21,8 @@
       {
         "key": "header-name",
         "textAlignment": "PKTextAlignmentRight",
-        "label": "Profession",
-        "value": "Software Engineer / Photograher"
+        "label": "Balakumar Velusamy",
+        "value": "IT / Photographer"
       }
     ],
     "auxiliaryFields": [
@@ -59,7 +59,7 @@
       {
         "key": "back-contact",
         "label": "Contact",
-        "value": " <a href=“tel:+1-502-210-8598>+1-5502-210-8598</a>"
+        "value": " <a href='tel:+15022108598'>+1-502-210-8598</a>"
       },
       {
         "key": "back-email",
