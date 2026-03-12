@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export const SEND_EMAIL_URL = "https://yzcjrbt1x1.execute-api.us-east-1.amazonaws.com/";
-export const FROM_EMAIL = "SSN Digital Media<info@ssndigitalmedia.com>";
+export const FROM_EMAIL = "SSN Digital Media <info@ssndigitalmedia.com>";
 
 // Attach to globalThis to prevent loss on fast refresh in dev
 const globalAny = globalThis as { otpStore?: Map<string, { code: string; expiresAt: number }> };
