@@ -2,7 +2,7 @@
 
 import { PassData } from "../app/(app)/page";
 
-export default function PassPreview({ data }: { data: PassData }) {
+export default function PassPreview({ data, qrCodeUrl }: { data: PassData, qrCodeUrl?: string | null }) {
     // A Pass looks like a solid colored card with a rounded top, 
     // an icon in the top left, header in top right, 
     // a prominent strip image in the middle, and barcode at bottom.
@@ -10,7 +10,7 @@ export default function PassPreview({ data }: { data: PassData }) {
     return (
         <div className="preview-container">
             <div
-                className="pass-card"
+                className="pass-card border border-gray-200"
                 style={{ backgroundColor: data.themeColor || "#677b5a" }}
             >
                 <div className="pass-header">
@@ -38,35 +38,29 @@ export default function PassPreview({ data }: { data: PassData }) {
                     )}
                 </div>
 
-                <div className="pass-primary-fields">
-                    <div className="field-group">
-                        <span className="f-label">{data.field1name}</span>
-                        <span className="f-value">{data.field1value}</span>
-                    </div>
-                    <div className="field-group align-right">
-                        <span className="f-label">{data.field2name}</span>
-                        <span className="f-value">{data.field2value}</span>
-                    </div>
-                </div>
-
-                <div className="pass-secondary-fields">
-                    {data.email && (
-                        <div className="field-group">
-                            <span className="f-label">EMAIL</span>
-                            <span className="f-value sm">{data.email}</span>
+                <div className="pass-secondary-fields" style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', padding: '0 1rem' }}>
+                    {(data.field1name || data.field1value) && (
+                        <div className="field-group" style={{ textAlign: 'left', flex: 1, overflow: 'hidden', paddingRight: '0.5rem' }}>
+                            <span className="f-label" style={{ whiteSpace: 'pre-wrap' }}>{data.field1name?.toUpperCase() || 'FIELD 1'}</span>
+                            <span className="f-value sm" style={{ fontSize: '0.7rem', wordBreak: 'break-word', display: 'block', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{data.field1value}</span>
                         </div>
                     )}
-                    {data.website && (
-                        <div className="field-group">
-                            <span className="f-label">WEBSITE</span>
-                            <span className="f-value sm">{data.website}</span>
+
+                    {(data.field2name || data.field2value) && (
+                        <div className="field-group" style={{ textAlign: 'right', flex: 1, overflow: 'hidden', paddingLeft: '0.5rem' }}>
+                            <span className="f-label" style={{ whiteSpace: 'pre-wrap' }}>{data.field2name?.toUpperCase() || 'FIELD 2'}</span>
+                            <span className="f-value sm" style={{ fontSize: '0.7rem', wordBreak: 'break-word', display: 'block', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{data.field2value}</span>
                         </div>
                     )}
                 </div>
 
                 <div className="pass-barcode-area">
                     <div className="pass-qr-placeholder">
-                        <div className="qr-fake"></div>
+                        {qrCodeUrl ? (
+                            <img src={qrCodeUrl} alt="QR Code" style={{ width: 120, height: 120, padding: 4, backgroundColor: 'white', borderRadius: 4 }} />
+                        ) : (
+                            <div className="qr-fake"></div>
+                        )}
                         <span className="qr-text">Scan & Save</span>
                     </div>
                 </div>

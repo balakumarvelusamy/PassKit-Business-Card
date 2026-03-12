@@ -1,27 +1,15 @@
 :root {
-  --background: #ffffff;
-  --surface: #f9f9fb;
-  --foreground: #1c1c1e;
-  --foreground-muted: #8e8e93;
-  --primary: #007aff;
-  --primary-hover: #0062cc;
-  --border: #e5e5ea;
+  --background: #000000;
+  --surface: #111111;
+  --foreground: #f2f2f7;
+  --foreground-muted: #98989d;
+  --primary: #0a84ff;
+  --primary-hover: #409cff;
+  --border: #333333;
   --radius: 12px;
 
   /* Theme color that user can select */
   --theme-color: #34c759;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --surface: #1c1c1e;
-    --foreground: #f2f2f7;
-    --foreground-muted: #98989d;
-    --primary: #0a84ff;
-    --primary-hover: #409cff;
-    --border: #38383a;
-  }
 }
 
 * {
@@ -79,16 +67,10 @@ button {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-}
-
-@media (prefers-color-scheme: dark) {
-  .app-header {
-    background-color: rgba(0, 0, 0, 0.75);
-  }
 }
 
 .header-content {
@@ -124,18 +106,12 @@ button {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--border);
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
-}
-
-@media (prefers-color-scheme: dark) {
-  .app-footer {
-    background-color: rgba(28, 28, 30, 0.92);
-  }
 }
 
 .footer-nav {

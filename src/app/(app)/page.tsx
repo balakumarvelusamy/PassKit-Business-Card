@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import QRCode from "qrcode";
 import PassForm from "../../components/PassForm";
 import PassPreview from "../../components/PassPreview";
 import "./home.css";
@@ -15,10 +16,6 @@ export interface PassData {
   field1value: string;
   field2name: string;
   field2value: string;
-  email: string;
-  website: string;
-  instagram: string;
-  pinterest: string;
   themeColor: string;
 }
 
@@ -33,19 +30,19 @@ export default function HomePage() {
     field1value: "5021234567",
     field2name: "Name",
     field2value: "John",
-    email: "info@youremail.com",
-    website: "www.yourwebsite.com",
-    instagram: "@yourinstagram",
-    pinterest: "",
     themeColor: "#677b5a", // default theme color from screenshot
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationResult, setGenerationResult] = useState<string | null>(null);
+  const [errorResult, setErrorResult] = useState<string | null>(null);
+  const [successUrl, setSuccessUrl] = useState<string | null>(null);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    setGenerationResult(null);
+    setErrorResult(null);
+    setSuccessUrl(null);
+    setQrCodeDataUrl(null);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -54,10 +51,13 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setGenerationResult(`Pass generated successfully! S3 URL: ${data.url}`);
+
+      setSuccessUrl(data.url);
+      const qrDataUrl = await QRCode.toDataURL(data.url, { width: 200, margin: 2 });
+      setQrCodeDataUrl(qrDataUrl);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      setGenerationResult(`Error: ${msg}`);
+      setErrorResult(`Error: ${msg}`);
     } finally {
       setIsGenerating(false);
     }
@@ -75,9 +75,34 @@ export default function HomePage() {
           <PassForm data={passData} onChange={setPassData} />
 
           <div className="action-panel">
-            {generationResult && (
-              <div className={`alert ${generationResult.includes("Error") ? "error" : "success"}`}>
-                {generationResult}
+            {errorResult && (
+              <div className="alert error">
+                {errorResult}
+              </div>
+            )}
+            {successUrl && (
+              <div
+                className="alert success"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "1rem",
+                  padding: "1.5rem",
+                  backgroundColor: passData.themeColor,
+                  color: "#ffffff"
+                }}
+              >
+                <span style={{ fontWeight: "bold", fontSize: "1.125rem" }}>Pass generated successfully!</span>
+                {qrCodeDataUrl && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <img src={qrCodeDataUrl} alt="QR Code for Pass" style={{ width: "180px", height: "180px", border: "1px solid #e5e7eb", borderRadius: "0.5rem", padding: "0.5rem", backgroundColor: "white" }} />
+                    <span style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#ffffff", fontWeight: 500 }}>Scan and Save</span>
+                  </div>
+                )}
+                <a href={successUrl} style={{ color: "#ffffff", textDecoration: "underline", fontWeight: 500, marginTop: "0.5rem" }}>
+                  Download Pass
+                </a>
               </div>
             )}
             <button
@@ -91,7 +116,7 @@ export default function HomePage() {
         </div>
 
         <div className="workspace-column preview-panel">
-          <PassPreview data={passData} />
+          <PassPreview data={passData} qrCodeUrl={qrCodeDataUrl} />
         </div>
       </div>
     </div>

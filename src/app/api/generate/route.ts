@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { PKPass } from "passkit-generator";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 const API_BASE_URL = "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/";
 const REGION = "ap-south-1";
@@ -61,34 +63,51 @@ export async function POST(request: Request) {
         const s3Url = `${baseUrl}${cleanFilename}`;
 
         // Construct the base pass.json to avoid type errors
+        const storeCard: Record<string, Record<string, unknown>[]> = {
+            headerFields: [],
+            primaryFields: [],
+            secondaryFields: [],
+            auxiliaryFields: []
+        };
+
+        if (data.name || data.profession) {
+            storeCard.headerFields.push({ key: "header", label: data.name || "Name", value: data.profession || "Profession", textAlignment: "PKTextAlignmentRight" });
+        }
+
+        // Leave primaryFields empty so nothing overlaps the banner image.
+
+        // Row 1 Below Banner (Secondary Fields, which render slightly larger)
+        if (data.field1name || data.field1value) {
+            storeCard.secondaryFields.push({
+                key: "primary_custom",
+                label: data.field1name?.toUpperCase() || "FIELD 1",
+                value: data.field1value || "",
+                textAlignment: "PKTextAlignmentLeft"
+            });
+        }
+
+        // Row 2 Below Banner (Auxiliary Fields, which render slightly smaller)
+        if (data.field2name || data.field2value) {
+            storeCard.auxiliaryFields.push({
+                key: "secondary_custom",
+                label: data.field2name?.toUpperCase() || "FIELD 2",
+                value: data.field2value || "",
+                textAlignment: "PKTextAlignmentRight"
+            });
+        }
+
         const passJson = {
-            passTypeIdentifier: process.env.PASS_TYPE_IDENTIFIER || "pass.com.ssndigitalmedia.generator",
-            teamIdentifier: process.env.TEAM_IDENTIFIER || "ABC1234567",
-            organizationName: "Pass Kit",
-            description: `${data.name}'s Business Card`,
-            logoText: "Pass Kit",
+            passTypeIdentifier: process.env.PASS_TYPE_IDENTIFIER || "pass.com.uniquecreations.contactpass",
+            teamIdentifier: process.env.TEAM_IDENTIFIER || "QALYWQD245",
+            organizationName: data.title || "Organisation",
+            description: `${data.name || "User"}'s Business Card`,
+            logoText: data.title || "",
             backgroundColor: data.themeColor || "#677b5a",
             foregroundColor: "#ffffff",
-            labelColor: "rgba(255,255,255,0.8)",
+            labelColor: "#cccccc",
             serialNumber: id,
             formatVersion: 1,
-            generic: {
-                primaryFields: [
-                    {
-                        key: "name",
-                        label: data.field1name || "Contact",
-                        value: data.field1value || "Value",
-                    }
-                ],
-                secondaryFields: [
-                    {
-                        key: "profession",
-                        label: data.field2name || "Name",
-                        value: data.field2value || "Value",
-                    }
-                ],
-                auxiliaryFields: [] as Record<string, unknown>[],
-            },
+            storeCard: storeCard,
             barcodes: [
                 {
                     message: s3Url,
@@ -99,25 +118,37 @@ export async function POST(request: Request) {
             ]
         };
 
-        if (data.email) {
-            passJson.generic.auxiliaryFields.push({ key: "email", label: "EMAIL", value: data.email });
+        const fileBundle: Record<string, Buffer> = {
+            "pass.json": Buffer.from(JSON.stringify(passJson)),
+        };
+
+        const dummyImg = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
+
+        if (data.icon && data.icon.includes(",")) {
+            const iconBuffer = Buffer.from(data.icon.split(",")[1], "base64");
+            fileBundle["icon.png"] = iconBuffer;
+            fileBundle["icon@2x.png"] = iconBuffer;
+            fileBundle["logo.png"] = iconBuffer;
+            fileBundle["logo@2x.png"] = iconBuffer;
+        } else {
+            fileBundle["icon.png"] = dummyImg;
+            fileBundle["icon@2x.png"] = dummyImg;
         }
-        if (data.website) {
-            passJson.generic.auxiliaryFields.push({ key: "website", label: "WEBSITE", value: data.website });
+
+        if (data.image && data.image.includes(",")) {
+            const stripBuffer = Buffer.from(data.image.split(",")[1], "base64");
+            fileBundle["strip.png"] = stripBuffer;
+            fileBundle["strip@2x.png"] = stripBuffer;
         }
 
         // Initialize Pass
         const pass = new PKPass(
+            fileBundle,
             {
-                "pass.json": Buffer.from(JSON.stringify(passJson)),
-                "icon.png": Buffer.from(data.icon?.split(",")[1] || "", "base64"),
-                "strip.png": data.image ? Buffer.from(data.image.split(",")[1], "base64") : Buffer.from(""),
-            },
-            {
-                signerCert: process.env.SIGNER_CERT_PATH || "./certs/signerCert.pem",
-                signerKey: process.env.SIGNER_KEY_PATH || "./certs/signerKey.pem",
-                signerKeyPassphrase: process.env.SIGNER_KEY_PASSPHRASE || "passphrase",
-                wwdr: process.env.WWDR_PATH || "./certs/wwdr.pem",
+                signerCert: fs.readFileSync(process.env.SIGNER_CERT_PATH || path.join(process.cwd(), "certs", "signerCert.pem"), "utf8"),
+                signerKey: fs.readFileSync(process.env.SIGNER_KEY_PATH || path.join(process.cwd(), "certs", "signerKey.pem"), "utf8"),
+                signerKeyPassphrase: process.env.SIGNER_KEY_PASSPHRASE || "ramuk89",
+                wwdr: fs.readFileSync(process.env.WWDR_PATH || path.join(process.cwd(), "certs", "wwdr.pem"), "utf8"),
             }
         );
 
