@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SignJWT } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET || "fallback_secret_for_development_only");
 
@@ -11,32 +11,28 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Email and OTP are required" }, { status: 400 });
         }
 
-        const globalAny = globalThis as { otpStore?: Map<string, { code: string; expiresAt: number }> };
-        const store = globalAny.otpStore;
+        // Retrieve the pending_otp cookie
+        const authHeaderOrCookie = request.headers.get("cookie");
+        const match = authHeaderOrCookie?.match(/pending_otp=([^;]+)/);
+        const pendingToken = match ? match[1] : null;
 
-        if (!store) {
-            return NextResponse.json({ error: "No OTP requests found. Please request a new code." }, { status: 400 });
+        if (!pendingToken) {
+            return NextResponse.json({ error: "No OTP requests found. Please request a new code or ensure cookies are enabled." }, { status: 400 });
         }
 
-        const record = store.get(email);
-
-        if (!record) {
-            return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+        let decoded;
+        try {
+            const { payload } = await jwtVerify(pendingToken, JWT_SECRET);
+            decoded = payload;
+        } catch (err) {
+            return NextResponse.json({ error: "OTP token is invalid or expired." }, { status: 400 });
         }
 
-        if (Date.now() > record.expiresAt) {
-            store.delete(email);
-            return NextResponse.json({ error: "OTP has expired" }, { status: 400 });
-        }
-
-        if (record.code !== otp) {
+        if (decoded.email !== email || decoded.otp !== otp) {
             return NextResponse.json({ error: "Invalid OTP code" }, { status: 400 });
         }
 
-        // OTP fits, success
-        store.delete(email);
-
-        // Create a JWT session token
+        // Create a JWT session token for full auth access
         const token = await new SignJWT({ email })
             .setProtectedHeader({ alg: "HS256" })
             .setIssuedAt()
@@ -45,12 +41,20 @@ export async function POST(request: Request) {
 
         // Set HTTP-only cookie
         const response = NextResponse.json({ success: true, message: "Logged in successfully" });
+
+        // Log the user in
         response.cookies.set("auth_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
             path: "/",
+        });
+
+        // Destroy the temp OTP cookie so it can't be reused
+        response.cookies.set("pending_otp", "", {
+            maxAge: -1,
+            path: "/api/auth/verify-otp",
         });
 
         return response;
