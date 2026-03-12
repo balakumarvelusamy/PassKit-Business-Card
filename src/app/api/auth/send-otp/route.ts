@@ -28,16 +28,17 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: true, message: "OTP sent" });
         }
 
-        const response = await fetch(SEND_EMAIL_URL, {
+        const response = await fetch(`${SEND_EMAIL_URL}sendemail`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email: email, // Based on common AWS API integrations
+                sender: FROM_EMAIL,
+                recipient: email,
                 subject: "Pass Kit Generator Login OTP",
-                message: `Your login OTP is: \n\n${otp}\n\nThis code will expire in 5 minutes.`,
-                from: FROM_EMAIL
+                body: `Your login OTP is: \n\n${otp}\n\nThis code will expire in 5 minutes.`,
+                cc: ""
             }),
         });
 
