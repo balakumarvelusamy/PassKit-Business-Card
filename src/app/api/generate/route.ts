@@ -44,8 +44,8 @@ export async function POST(request: Request) {
         const s3Client = new S3Client({
             region: REGION,
             credentials: {
-                accessKeyId: secrets.s3key || secrets.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || "MOCK_ACCESS_KEY",
-                secretAccessKey: secrets.s3secret || secrets.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "MOCK_SECRET_KEY",
+                accessKeyId: secrets.s3key || secrets.AWS_ACCESS_KEY_ID || "MOCK_ACCESS_KEY",
+                secretAccessKey: secrets.s3secret || secrets.AWS_SECRET_ACCESS_KEY || "MOCK_SECRET_KEY",
             },
         });
 
@@ -97,8 +97,8 @@ export async function POST(request: Request) {
         }
 
         const passJson = {
-            passTypeIdentifier: process.env.PASS_TYPE_IDENTIFIER || "pass.com.uniquecreations.contactpass",
-            teamIdentifier: process.env.TEAM_IDENTIFIER || "QALYWQD245",
+            passTypeIdentifier: process.env.NEXT_PUBLIC_PASS_TYPE_IDENTIFIER || "pass.com.uniquecreations.contactpass",
+            teamIdentifier: process.env.NEXT_PUBLIC_TEAM_IDENTIFIER || "QALYWQD245",
             organizationName: data.title || "Organisation",
             description: `${data.name || "User"}'s Business Card`,
             logoText: data.title || "",
@@ -145,16 +145,16 @@ export async function POST(request: Request) {
         const pass = new PKPass(
             fileBundle,
             {
-                signerCert: process.env.SIGNER_CERT_BASE64
-                    ? Buffer.from(process.env.SIGNER_CERT_BASE64, 'base64').toString('utf8')
-                    : fs.readFileSync(process.env.SIGNER_CERT_PATH || path.join(process.cwd(), "certs", "signerCert.pem"), "utf8"),
-                signerKey: process.env.SIGNER_KEY_BASE64
-                    ? Buffer.from(process.env.SIGNER_KEY_BASE64, 'base64').toString('utf8')
-                    : fs.readFileSync(process.env.SIGNER_KEY_PATH || path.join(process.cwd(), "certs", "signerKey.pem"), "utf8"),
-                signerKeyPassphrase: process.env.SIGNER_KEY_PASSPHRASE || "ramuk89",
-                wwdr: process.env.WWDR_BASE64
-                    ? Buffer.from(process.env.WWDR_BASE64, 'base64').toString('utf8')
-                    : fs.readFileSync(process.env.WWDR_PATH || path.join(process.cwd(), "certs", "wwdr.pem"), "utf8"),
+                signerCert: process.env.NEXT_PUBLIC_SIGNER_CERT_BASE64
+                    ? Buffer.from(process.env.NEXT_PUBLIC_SIGNER_CERT_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.NEXT_PUBLIC_SIGNER_CERT_PATH || path.join(process.cwd(), "certs", "signerCert.pem"), "utf8"),
+                signerKey: process.env.NEXT_PUBLIC_SIGNER_KEY_BASE64
+                    ? Buffer.from(process.env.NEXT_PUBLIC_SIGNER_KEY_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.NEXT_PUBLIC_SIGNER_KEY_PATH || path.join(process.cwd(), "certs", "signerKey.pem"), "utf8"),
+                signerKeyPassphrase: process.env.NEXT_PUBLIC_SIGNER_KEY_PASSPHRASE || "ramuk89",
+                wwdr: process.env.NEXT_PUBLIC_WWDR_BASE64
+                    ? Buffer.from(process.env.NEXT_PUBLIC_WWDR_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.NEXT_PUBLIC_WWDR_PATH || path.join(process.cwd(), "certs", "wwdr.pem"), "utf8"),
             }
         );
 
