@@ -42,8 +42,9 @@ export async function POST(request: Request) {
         });
 
         if (!response.ok) {
-            console.error("Email service failed:", await response.text());
-            throw new Error(`Failed to fetch secrets: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error("Email service failed:", errorText);
+            return NextResponse.json({ error: `Failed to send email: ${errorText}` }, { status: response.status });
         }
 
         return NextResponse.json({ success: true, message: "OTP sent" });
