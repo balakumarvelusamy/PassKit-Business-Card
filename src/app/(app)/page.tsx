@@ -8,6 +8,7 @@ import "./home.css";
 export interface PassData {
   icon: string;
   name: string;
+  title: string;
   profession: string;
   image: string;
   field1name: string;
@@ -24,16 +25,17 @@ export interface PassData {
 export default function HomePage() {
   const [passData, setPassData] = useState<PassData>({
     icon: "",
-    name: "Balakumar Velusamy",
-    profession: "IT / Photographer",
+    name: "",
+    title: "Organisation Name",
+    profession: "",
     image: "",
-    field1name: "CONTACT",
-    field1value: "+15022108598",
-    field2name: "NAME",
-    field2value: "Balakumar Velusamy",
-    email: "info@ssndigitalmedia.com",
-    website: "ssndigitalmedia.com",
-    instagram: "@ssn_digital",
+    field1name: "Contact",
+    field1value: "5021234567",
+    field2name: "Name",
+    field2value: "John",
+    email: "info@youremail.com",
+    website: "www.yourwebsite.com",
+    instagram: "@yourinstagram",
     pinterest: "",
     themeColor: "#677b5a", // default theme color from screenshot
   });

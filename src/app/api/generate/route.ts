@@ -64,9 +64,9 @@ export async function POST(request: Request) {
         const passJson = {
             passTypeIdentifier: process.env.PASS_TYPE_IDENTIFIER || "pass.com.ssndigitalmedia.generator",
             teamIdentifier: process.env.TEAM_IDENTIFIER || "ABC1234567",
-            organizationName: "SSN Digital Media",
+            organizationName: "Pass Kit",
             description: `${data.name}'s Business Card`,
-            logoText: "SSN Digital Media",
+            logoText: "Pass Kit",
             backgroundColor: data.themeColor || "#677b5a",
             foregroundColor: "#ffffff",
             labelColor: "rgba(255,255,255,0.8)",
@@ -76,14 +76,14 @@ export async function POST(request: Request) {
                 primaryFields: [
                     {
                         key: "name",
-                        label: data.field1name || "CONTACT",
+                        label: data.field1name || "Contact",
                         value: data.field1value || "Value",
                     }
                 ],
                 secondaryFields: [
                     {
                         key: "profession",
-                        label: data.field2name || "NAME",
+                        label: data.field2name || "Name",
                         value: data.field2value || "Value",
                     }
                 ],

@@ -20,7 +20,7 @@ export default function PassPreview({ data }: { data: PassData }) {
                         ) : (
                             <div className="pass-logo-placeholder"></div>
                         )}
-                        <span className="pass-title">SSN Digital Media</span>
+                        <span className="pass-title">{data.title}</span>
                     </div>
                     <div className="pass-header-fields">
                         <span className="hf-label">{data.name.toUpperCase()}</span>
