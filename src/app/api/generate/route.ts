@@ -145,10 +145,16 @@ export async function POST(request: Request) {
         const pass = new PKPass(
             fileBundle,
             {
-                signerCert: fs.readFileSync(process.env.SIGNER_CERT_PATH || path.join(process.cwd(), "certs", "signerCert.pem"), "utf8"),
-                signerKey: fs.readFileSync(process.env.SIGNER_KEY_PATH || path.join(process.cwd(), "certs", "signerKey.pem"), "utf8"),
+                signerCert: process.env.SIGNER_CERT_BASE64
+                    ? Buffer.from(process.env.SIGNER_CERT_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.SIGNER_CERT_PATH || path.join(process.cwd(), "certs", "signerCert.pem"), "utf8"),
+                signerKey: process.env.SIGNER_KEY_BASE64
+                    ? Buffer.from(process.env.SIGNER_KEY_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.SIGNER_KEY_PATH || path.join(process.cwd(), "certs", "signerKey.pem"), "utf8"),
                 signerKeyPassphrase: process.env.SIGNER_KEY_PASSPHRASE || "ramuk89",
-                wwdr: fs.readFileSync(process.env.WWDR_PATH || path.join(process.cwd(), "certs", "wwdr.pem"), "utf8"),
+                wwdr: process.env.WWDR_BASE64
+                    ? Buffer.from(process.env.WWDR_BASE64, 'base64').toString('utf8')
+                    : fs.readFileSync(process.env.WWDR_PATH || path.join(process.cwd(), "certs", "wwdr.pem"), "utf8"),
             }
         );
 
