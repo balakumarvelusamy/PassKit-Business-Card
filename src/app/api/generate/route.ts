@@ -42,7 +42,7 @@ export async function POST(request: Request) {
             try {
                 const { payload } = await jwtVerify(token, JWT_SECRET);
                 if (payload && typeof payload.email === "string") {
-                    userEmail = payload.email.replace(/[^a-zA-Z0-9.@_-]/g, ""); // sanitize email
+                    userEmail = payload.email.replace(/@/g, "-").replace(/[^a-zA-Z0-9.-]/g, ""); // sanitize email
                 }
             } catch (err) {
                 console.warn("Invalid or expired auth token:", err);
