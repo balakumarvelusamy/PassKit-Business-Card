@@ -70,7 +70,32 @@ export default function HomePage() {
     }
   };
 
-  return (
+    const handleDownload = async () => {
+        if (!successUrl) return;
+        try {
+            const encodedUrl = encodeURIComponent(successUrl);
+            const res = await fetch(`/api/download?url=${encodedUrl}`);
+            if (!res.ok) throw new Error("Download failed");
+            
+            const blob = await res.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = passData.title ? `${passData.title.trim()}-pass.pkpass` : 'pass.pkpass';
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (err) {
+            console.error("Download error:", err);
+            alert("Error downloading pass. Please try again.");
+        }
+    };
+
+    return (
     <div className="home-container">
       <div className="home-header" style={{ display: "none" }}>
         <span className="text-center text-sm-100 font-italic"> To Create a Business Card Pass Fill out the details below to generate an Apple Wallet Business Card.</span>
@@ -106,9 +131,9 @@ export default function HomePage() {
                     <span style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#ffffff", fontWeight: 500 }}>Scan and Save</span>
                   </div>
                 )}
-                <a href={`/api/download?url=${encodeURIComponent(successUrl)}`} rel="noopener noreferrer" style={{ color: "#ffffff", textDecoration: "underline", fontWeight: 500, marginTop: "0.5rem" }}>
+                <button onClick={handleDownload} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#ffffff", textDecoration: "underline", fontSize: "1rem", fontWeight: 500, marginTop: "0.5rem" }}>
                   Download Pass
-                </a>
+                </button>
               </div>
             )}
             <button
