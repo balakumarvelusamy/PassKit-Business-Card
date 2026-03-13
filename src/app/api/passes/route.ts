@@ -18,7 +18,7 @@ export async function GET(request: Request) {
         try {
             const { payload } = await jwtVerify(token, JWT_SECRET);
             if (payload && typeof payload.email === "string") {
-                userEmail = payload.email.replace(/[^a-zA-Z0-9.@_-]/g, ""); 
+                userEmail = payload.email.replace(/@/g, "-").replace(/[^a-zA-Z0-9.-]/g, ""); 
             }
         } catch (err) {
             return NextResponse.json({ error: "Invalid token" }, { status: 401 });
@@ -76,7 +76,7 @@ export async function DELETE(request: Request) {
         try {
             const { payload } = await jwtVerify(token, JWT_SECRET);
             if (payload && typeof payload.email === "string") {
-                userEmail = payload.email.replace(/[^a-zA-Z0-9.@_-]/g, ""); 
+                userEmail = payload.email.replace(/@/g, "-").replace(/[^a-zA-Z0-9.-]/g, ""); 
             }
         } catch (err) {
             return NextResponse.json({ error: "Invalid token" }, { status: 401 });
