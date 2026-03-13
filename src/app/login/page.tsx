@@ -76,9 +76,8 @@ export default function LoginPage() {
         }
     };
 
-    const handleVerifyOtp = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!otp) return;
+    const submitOtp = async (otpValue: string) => {
+        if (!otpValue) return;
 
         setLoading(true);
         setError("");
@@ -87,7 +86,7 @@ export default function LoginPage() {
             const res = await fetch("/api/auth/verify-otp", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, otp }),
+                body: JSON.stringify({ email, otp: otpValue }),
             });
 
             const data = await res.json();
@@ -99,7 +98,7 @@ export default function LoginPage() {
 
             // Save encrypted values to secure local storage
             secureLocalStorage.setItem("email", email);
-            secureLocalStorage.setItem("otp", otp);
+            secureLocalStorage.setItem("otp", otpValue);
             secureLocalStorage.setItem("logged_in", true);
 
             // Successful login, force a full page reload to ensure middleware gets the new cookie
@@ -110,6 +109,19 @@ export default function LoginPage() {
             setError(msg);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await submitOtp(otp);
+    };
+
+    const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        setOtp(value);
+        if (value.length === 6) {
+            submitOtp(value);
         }
     };
 
@@ -152,10 +164,11 @@ export default function LoginPage() {
                             <label htmlFor="otp">Verification Code</label>
                             <input
                                 id="otp"
-                                type="text"
+                                type="tel"
+                                inputMode="numeric"
                                 placeholder="123456"
                                 value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
+                                onChange={handleOtpChange}
                                 required
                                 maxLength={6}
                                 pattern="[0-9]{6}"

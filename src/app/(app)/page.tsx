@@ -7,9 +7,9 @@ import PassPreview from "../../components/PassPreview";
 import "./home.css";
 
 declare global {
-    interface Window {
-        ReactNativeWebView: any;
-    }
+  interface Window {
+    ReactNativeWebView: any;
+  }
 }
 
 export interface PassData {
@@ -27,16 +27,16 @@ export interface PassData {
 
 export default function HomePage() {
   const [passData, setPassData] = useState<PassData>({
-    icon: "",
-    name: "",
-    title: "",
-    profession: "",
-    image: "",
-    field1name: "",
-    field1value: "",
-    field2name: "",
-    field2value: "",
-    themeColor: "#677b5a", // default theme color from screenshot
+    icon: "/passkitapp.jpg",
+    name: "Contact Name",
+    title: "Org Name",
+    profession: "509 235 2353",
+    image: "/mainimage.png",
+    field1name: "Email",
+    field1value: "info@example.com",
+    field2name: "Website",
+    field2value: "www.example.com",
+    themeColor: "#252424ff", // default theme color from screenshot
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -44,16 +44,16 @@ export default function HomePage() {
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
 
-    const handleGenerate = async () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
     setErrorResult(null);
     setSuccessUrl(null);
     setQrCodeDataUrl(null);
 
     if (!passData.title || passData.title.trim() === "") {
-        setErrorResult("Organisation Name is required to generate a pass.");
-        setIsGenerating(false);
-        return;
+      setErrorResult("Organisation Name is required to generate a pass.");
+      setIsGenerating(false);
+      return;
     }
 
     try {
@@ -76,42 +76,42 @@ export default function HomePage() {
     }
   };
 
-    const handleDownload = async () => {
-        if (!successUrl) return;
-        try {
-            const encodedUrl = encodeURIComponent(successUrl);
-            const downloadUrl = `/api/download?url=${encodedUrl}`;
+  const handleDownload = async () => {
+    if (!successUrl) return;
+    try {
+      const encodedUrl = encodeURIComponent(successUrl);
+      const downloadUrl = `/api/download?url=${encodedUrl}`;
 
-            // If we are inside the React Native App WebView, we need to trigger a standard
-            // navigation so that the 'onShouldStartLoadWithRequest' interceptor can catch
-            // the download URL and pass it natively to iOS Safari / Apple Wallet.
-            if (window.ReactNativeWebView) {
-                window.location.href = downloadUrl;
-                return;
-            }
+      // If we are inside the React Native App WebView, we need to trigger a standard
+      // navigation so that the 'onShouldStartLoadWithRequest' interceptor can catch
+      // the download URL and pass it natively to iOS Safari / Apple Wallet.
+      if (window.ReactNativeWebView) {
+        window.location.href = downloadUrl;
+        return;
+      }
 
-            const res = await fetch(downloadUrl);
-            if (!res.ok) throw new Error("Download failed");
-            
-            const blob = await res.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = blobUrl;
-            a.download = passData.title ? `${passData.title.trim()}-pass.pkpass` : 'pass.pkpass';
-            document.body.appendChild(a);
-            a.click();
-            
-            window.URL.revokeObjectURL(blobUrl);
-            document.body.removeChild(a);
-        } catch (err) {
-            console.error("Download error:", err);
-            alert("Error downloading pass. Please try again.");
-        }
-    };
+      const res = await fetch(downloadUrl);
+      if (!res.ok) throw new Error("Download failed");
 
-    return (
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = blobUrl;
+      a.download = passData.title ? `${passData.title.trim()}-pass.pkpass` : 'pass.pkpass';
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Download error:", err);
+      alert("Error downloading pass. Please try again.");
+    }
+  };
+
+  return (
     <div className="home-container">
       <div className="home-header" style={{ display: "none" }}>
         <span className="text-center text-sm-100 font-italic"> To Create a Business Card Pass Fill out the details below to generate an Apple Wallet Business Card.</span>
