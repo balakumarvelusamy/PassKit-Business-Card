@@ -33,8 +33,8 @@ export default function PassForm({ data, onChange }: { data: PassData; onChange:
                 <div className="input-row">
 
                     <div className="input-group">
-                        <label>Organisation Name</label>
-                        <input type="text" name="title" value={data.title} onChange={handleChange} placeholder="e.g. Acme Corp" />
+                        <label>Organisation Name <span style={{ color: "var(--theme-color, #ff3b30)" }}>*</span></label>
+                        <input type="text" name="title" value={data.title} onChange={handleChange} placeholder="e.g. Acme Corp" required />
                     </div>
                 </div>
                 <div className="input-group">
