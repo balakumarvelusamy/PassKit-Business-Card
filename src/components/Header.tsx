@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import config from "../config.json";
 
 export default function Header() {
     const router = useRouter();
@@ -18,7 +20,13 @@ export default function Header() {
     return (
         <header className="app-header">
             <div className="header-content">
-                <h1 className="header-title">Pass Kit Generator</h1>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <img src="/passkitapp.jpg" width="40" height="40" alt="PassKit Logo" style={{ borderRadius: "8px" }} />
+                    <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+                        <h1 className="header-title" style={{ margin: 0, cursor: "pointer" }}>{config.title}</h1>
+                    </Link>
+                </div>
+
                 <button onClick={handleLogout} className="logout-btn">
                     Logout
                 </button>

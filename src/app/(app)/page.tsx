@@ -23,13 +23,13 @@ export default function HomePage() {
   const [passData, setPassData] = useState<PassData>({
     icon: "",
     name: "",
-    title: "Organisation Name",
+    title: "",
     profession: "",
     image: "",
-    field1name: "Contact",
-    field1value: "5021234567",
-    field2name: "Name",
-    field2value: "John",
+    field1name: "",
+    field1value: "",
+    field2name: "",
+    field2value: "",
     themeColor: "#677b5a", // default theme color from screenshot
   });
 
@@ -65,9 +65,8 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
-      <div className="home-header">
-        <span className="text-2xl font-bold text-center font-bold">To Create a Business Card Pass</span>
-        <span className="text-center text-sm-600 font-italic"> Fill out the details below to generate an Apple Wallet Business Card.</span>
+      <div className="home-header" style={{ display: "none" }}>
+        <span className="text-center text-sm-100 font-italic"> To Create a Business Card Pass Fill out the details below to generate an Apple Wallet Business Card.</span>
       </div>
 
       <div className="pass-workspace">

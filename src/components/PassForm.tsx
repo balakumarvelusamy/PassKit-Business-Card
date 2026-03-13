@@ -51,7 +51,7 @@ export default function PassForm({ data, onChange }: { data: PassData; onChange:
                         <input type="color" name="themeColor" value={data.themeColor} onChange={handleChange} className="color-picker" />
                     </div>
                     <div className="input-group">
-                        <label>Main Background / Strip Image</label>
+                        <label>Strip Image</label>
                         <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
                     </div>
                 </div>
