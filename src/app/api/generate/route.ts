@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
         // Generate a 4-digit random pass name
         const id = Math.floor(1000 + Math.random() * 9000).toString();
-        const rawFilename = `pass-${id}.pkpass`;
+        const rawFilename = `pass-${data.title}-${id}.pkpass`;
         const cleanFilename = rawFilename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '');
 
         // Construct Key: prefix + filename
