@@ -3,15 +3,23 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import config from "../config.json";
+import secureLocalStorage from "react-secure-storage";
 
 export default function Header() {
     const router = useRouter();
 
     const handleLogout = async () => {
+        if (!window.confirm("Are you sure you want to log out?")) {
+            return;
+        }
+
         try {
             await fetch("/api/auth/logout", { method: "POST" });
-            router.push("/login");
-            router.refresh();
+            secureLocalStorage.removeItem("logged_in");
+            secureLocalStorage.removeItem("email");
+            secureLocalStorage.removeItem("otp");
+            secureLocalStorage.clear();
+            window.location.href = "/login";
         } catch (e) {
             console.error(e);
         }

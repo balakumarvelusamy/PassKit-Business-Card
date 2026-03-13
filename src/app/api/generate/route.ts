@@ -78,7 +78,7 @@ export async function POST(request: Request) {
             });
             const listResponse = await s3Client.send(listCommand);
             const passCount = listResponse.KeyCount || 0;
-            
+
             if (passCount >= config.MAX_PASSES) {
                 return NextResponse.json({ error: `You have reached the limit of ${config.MAX_PASSES} passes. Please delete an existing pass before creating a new one.` }, { status: 403 });
             }
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
         // Generate a 4-digit random pass name
         const id = Math.floor(1000 + Math.random() * 9000).toString();
-        const rawFilename = `pass-${data.title}-${id}.pkpass`;
+        const rawFilename = `${data.title}-${id}.pkpass`;
         const cleanFilename = rawFilename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '');
 
         // Construct Key: prefix + filename
