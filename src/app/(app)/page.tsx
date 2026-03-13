@@ -6,6 +6,12 @@ import PassForm from "../../components/PassForm";
 import PassPreview from "../../components/PassPreview";
 import "./home.css";
 
+declare global {
+    interface Window {
+        ReactNativeWebView: any;
+    }
+}
+
 export interface PassData {
   icon: string;
   name: string;
@@ -74,7 +80,17 @@ export default function HomePage() {
         if (!successUrl) return;
         try {
             const encodedUrl = encodeURIComponent(successUrl);
-            const res = await fetch(`/api/download?url=${encodedUrl}`);
+            const downloadUrl = `/api/download?url=${encodedUrl}`;
+
+            // If we are inside the React Native App WebView, we need to trigger a standard
+            // navigation so that the 'onShouldStartLoadWithRequest' interceptor can catch
+            // the download URL and pass it natively to iOS Safari / Apple Wallet.
+            if (window.ReactNativeWebView) {
+                window.location.href = downloadUrl;
+                return;
+            }
+
+            const res = await fetch(downloadUrl);
             if (!res.ok) throw new Error("Download failed");
             
             const blob = await res.blob();
