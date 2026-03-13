@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import secureLocalStorage from "react-secure-storage";
+import config from "../../config.json";
 import "./login.css"; // We'll create a module/css file for the scoped premium styles
 
 export default function LoginPage() {
@@ -12,6 +14,36 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
+
+    // Auto-login if secure local storage has the credentials
+    useEffect(() => {
+        const storedEmail = secureLocalStorage.getItem("email") as string;
+        const storedOtp = secureLocalStorage.getItem("otp") as string;
+        const isLoggedIn = secureLocalStorage.getItem("logged_in");
+
+        if (isLoggedIn === true && storedEmail && storedOtp) {
+            const autoLogin = async () => {
+                setLoading(true);
+                try {
+                    const res = await fetch("/api/auth/auto-login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: storedEmail, otp: storedOtp }),
+                    });
+
+                    if (res.ok) {
+                        window.location.href = "/";
+                    } else {
+                        secureLocalStorage.removeItem("logged_in");
+                        setLoading(false);
+                    }
+                } catch (e) {
+                    setLoading(false);
+                }
+            };
+            autoLogin();
+        }
+    }, []);
 
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,14 +92,18 @@ export default function LoginPage() {
 
             const data = await res.json();
             console.log("OTP API Response Data:", data);
-            if (!data.success) {
-                console.error("API Error Data:", data);
-                throw new Error(data.error || "Invalid OTP");
+
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to verify OTP");
             }
 
-            // Successful login, middleware will allow us into /
-            router.push("/");
-            router.refresh();
+            // Save encrypted values to secure local storage
+            secureLocalStorage.setItem("email", email);
+            secureLocalStorage.setItem("otp", otp);
+            secureLocalStorage.setItem("logged_in", true);
+
+            // Successful login, force a full page reload to ensure middleware gets the new cookie
+            window.location.href = "/";
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
             console.error("Verification Exception:", msg);
@@ -81,8 +117,8 @@ export default function LoginPage() {
         <div className="login-container">
             <div className="login-card fade-in">
                 <div className="brand">
-                    <div className="logo-placeholder"><img src="..//passkitapp.jpg" width="100" height="100" alt="PassKit Logo" /></div>
-                    <h1>SSN PassKit</h1>
+                    <div className="logo-placeholder"><img src="/passkitapp.jpg" width="100" height="100" alt="PassKit Logo" /></div>
+                    <h1>{config.title}</h1>
                 </div>
 
                 <p className="subtitle">

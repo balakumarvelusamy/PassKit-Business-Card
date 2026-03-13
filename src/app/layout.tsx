@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import config from "../config.json";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SSN Pass Kit Generator",
+  title: config.title,
   description: "Generate a custom digital business card.",
 };
 
@@ -13,6 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      </head>
       <body>
         <div className="app-container">
           {children}

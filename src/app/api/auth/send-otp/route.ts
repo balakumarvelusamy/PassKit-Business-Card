@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { SignJWT } from "jose";
 
 export const SEND_EMAIL_URL = "https://yzcjrbt1x1.execute-api.us-east-1.amazonaws.com/";
-export const FROM_EMAIL = "SSN Pass Kit Generator<info@ssndigitalmedia.com>";
+export const FROM_EMAIL = "Digital Pass Kit Generator<info@ssndigitalmedia.com>";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET || "fallback_secret_for_development_only");
 
