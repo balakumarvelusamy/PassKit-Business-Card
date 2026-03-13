@@ -47,7 +47,16 @@ export async function GET(request: Request) {
         });
 
         const listResponse = await s3Client.send(listCommand);
-        const passes = (listResponse.Contents || []).map(obj => ({
+        const contents = listResponse.Contents || [];
+        
+        // Sort by LastModified (newest first)
+        contents.sort((a, b) => {
+            const timeA = a.LastModified ? a.LastModified.getTime() : 0;
+            const timeB = b.LastModified ? b.LastModified.getTime() : 0;
+            return timeB - timeA;
+        });
+
+        const passes = contents.map(obj => ({
             key: obj.Key,
             lastModified: obj.LastModified,
             size: obj.Size,

@@ -38,11 +38,18 @@ export default function HomePage() {
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
+    const handleGenerate = async () => {
     setIsGenerating(true);
     setErrorResult(null);
     setSuccessUrl(null);
     setQrCodeDataUrl(null);
+
+    if (!passData.title || passData.title.trim() === "") {
+        setErrorResult("Organisation Name is required to generate a pass.");
+        setIsGenerating(false);
+        return;
+    }
+
     try {
       const res = await fetch("/api/generate", {
         method: "POST",

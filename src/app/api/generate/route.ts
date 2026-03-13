@@ -32,6 +32,11 @@ export async function POST(request: Request) {
     try {
         const data = await request.json();
 
+        // Validate mandatory fields
+        if (!data.title || data.title.trim() === "") {
+            return NextResponse.json({ error: "Organisation Name is required." }, { status: 400 });
+        }
+
         // Extract logged-in user email
         let userEmail = "anonymous";
         const authHeaderOrCookie = request.headers.get("cookie");
