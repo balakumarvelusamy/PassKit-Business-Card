@@ -33,6 +33,12 @@ export default function ProfilePage() {
                         <span style={{ fontSize: "0.9rem", color: "var(--foreground-muted)", fontWeight: 600 }}>USER EMAIL</span>
                         <span style={{ fontSize: "1.1rem", fontWeight: 500 }}>{userEmail}</span>
                     </div>
+
+                    <div style={{ marginTop: "2rem", padding: "1rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                        <span style={{ fontSize: "0.85rem", color: "var(--foreground-muted)", lineHeight: "1.4", display: "block" }}>
+                            <strong>Note:</strong> We are not saving your personal information. You have full access to delete your pass key from your account.
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
