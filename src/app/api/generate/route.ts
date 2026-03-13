@@ -136,10 +136,10 @@ export async function POST(request: Request) {
         const passJson = {
             passTypeIdentifier: process.env.NEXT_PUBLIC_PASS_TYPE_IDENTIFIER || "pass.com.uniquecreations.contactpass",
             teamIdentifier: process.env.NEXT_PUBLIC_TEAM_IDENTIFIER || "QALYWQD245",
-            organizationName: data.title || "Organisation",
-            description: `${data.name || "User"}'s Business Card`,
-            logoText: data.title || "",
-            backgroundColor: data.themeColor || "#677b5a",
+            organizationName: data.title ? data.title.trim().substring(0, 50) : "Organisation",
+            description: `${data.name ? data.name.trim().substring(0, 50) : "User"}'s Business Card`,
+            logoText: data.title ? data.title.trim().substring(0, 50) : "",
+            backgroundColor: data.themeColor?.match(/^#[0-9a-fA-F]{6}$/) ? data.themeColor : "#677b5a",
             foregroundColor: "#ffffff",
             labelColor: "#cccccc",
             serialNumber: id,
@@ -230,7 +230,16 @@ export async function POST(request: Request) {
 
     } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : String(error);
-        console.error("Error generating pass:", msg);
+        
+        // Detailed error logging to trace "String did not match the exact pattern"
+        console.error("=======================");
+        console.error("FULL ERROR GENERATING PASS:");
+        console.error(error);
+        if (error instanceof Error && error.stack) {
+             console.error("STACK TRACE:", error.stack);
+        }
+        console.error("=======================");
+
         return NextResponse.json({ error: msg || "Internal server error" }, { status: 500 });
     }
 }
