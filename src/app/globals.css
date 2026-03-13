@@ -41,36 +41,45 @@ button {
 /* App Layout */
 .app-container {
   display: flex;
-  min-height: 100vh;
+  height: 100dvh;
+  width: 100vw;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
   background-color: var(--surface);
+  position: relative;
 }
 
 .app-main {
   flex: 1;
   padding: 0.5rem;
+  padding-top: 4rem; /* Buffer for absolute header */
   padding-bottom: 5rem;
-  /* Space for fixed footer */
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Header */
 .app-header {
-  position: sticky;
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .header-content {
@@ -102,7 +111,7 @@ button {
 
 /* Footer Navigation */
 .app-footer {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
@@ -110,6 +119,8 @@ button {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--border);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
 }

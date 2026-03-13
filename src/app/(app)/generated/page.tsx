@@ -3,6 +3,12 @@
 import React, { useEffect, useState } from "react";
 import "../home.css";
 
+declare global {
+    interface Window {
+        ReactNativeWebView: any;
+    }
+}
+
 interface Pass {
     key: string;
     lastModified: string;
@@ -66,7 +72,15 @@ export default function GeneratedPassPage() {
     const handleDownload = async (passUrl: string, filename: string) => {
         try {
             const encodedUrl = encodeURIComponent(passUrl);
-            const res = await fetch(`/api/download?url=${encodedUrl}`);
+            const downloadUrl = `/api/download?url=${encodedUrl}`;
+
+            // React Native Interception Strategy
+            if (window.ReactNativeWebView) {
+                window.location.href = downloadUrl;
+                return;
+            }
+
+            const res = await fetch(downloadUrl);
             if (!res.ok) throw new Error("Download failed");
             
             const blob = await res.blob();
