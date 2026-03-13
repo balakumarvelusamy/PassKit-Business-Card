@@ -106,7 +106,7 @@ export default function HomePage() {
                     <span style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#ffffff", fontWeight: 500 }}>Scan and Save</span>
                   </div>
                 )}
-                <a href={successUrl} style={{ color: "#ffffff", textDecoration: "underline", fontWeight: 500, marginTop: "0.5rem" }}>
+                <a href={`/api/download?url=${encodeURIComponent(successUrl)}`} rel="noopener noreferrer" style={{ color: "#ffffff", textDecoration: "underline", fontWeight: 500, marginTop: "0.5rem" }}>
                   Download Pass
                 </a>
               </div>
