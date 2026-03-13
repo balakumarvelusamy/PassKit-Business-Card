@@ -22,8 +22,8 @@ export async function GET(request: Request) {
 
         const headers = new Headers();
         headers.set('Content-Type', 'application/vnd.apple.pkpass');
-        headers.set('Content-Disposition', `attachment; filename="${filename}"`);
-        // Necessary for iOS WebView to trigger download instead of trying to render inline
+        // Let WKWebView intercept the mime-type natively instead of forcing a raw disk download
+        headers.set('Content-Disposition', `inline; filename="${filename}"`);
         headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
         return new NextResponse(passBuffer, {
