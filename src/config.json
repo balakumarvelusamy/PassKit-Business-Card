@@ -1,8 +1,8 @@
 {
-  "title": "Digital Pass Kit Generator",
+  "title": "Pass Kit Generator",
   "API_BASE_URL": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
   "REGION": "ap-south-1",
   "SEND_EMAIL_URL": "https://yzcjrbt1x1.execute-api.us-east-1.amazonaws.com/",
-  "FROM_EMAIL": "Digital Pass Kit Generator<info@ssndigitalmedia.com>",
+  "FROM_EMAIL": "Pass Kit Generator<info@ssndigitalmedia.com>",
   "MAX_PASSES": 10
 }
