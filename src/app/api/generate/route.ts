@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
 import { PKPass } from "passkit-generator";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import { jwtVerify } from "jose";
+import config from "../../../config.json";
 
-const API_BASE_URL = "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/";
-const REGION = "ap-south-1";
-
-// Adapted from user's snippet
-const s3ConfigString = "ssndigitalmedia/ssnpasskitapp/prod/";
-const parts = s3ConfigString.split('/').filter(Boolean);
-const bucketName = parts[0]; // "ssndigitalmedia"
-const prefixPath = parts.slice(1).join('/'); // "ssnpasskitapp/prod"
-
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET || "fallback_secret_for_development_only");
 export const getSecrets = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}getsecrets`, {
+        const response = await fetch(`${config.API_BASE_URL}getsecrets`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: "Get Secrets" }),
@@ -38,19 +32,57 @@ export async function POST(request: Request) {
     try {
         const data = await request.json();
 
+        // Extract logged-in user email
+        let userEmail = "anonymous";
+        const authHeaderOrCookie = request.headers.get("cookie");
+        const match = authHeaderOrCookie?.match(/auth_token=([^;]+)/);
+        const token = match ? match[1] : null;
+
+        if (token) {
+            try {
+                const { payload } = await jwtVerify(token, JWT_SECRET);
+                if (payload && typeof payload.email === "string") {
+                    userEmail = payload.email.replace(/[^a-zA-Z0-9.@_-]/g, ""); // sanitize email
+                }
+            } catch (err) {
+                console.warn("Invalid or expired auth token:", err);
+            }
+        }
+
+        const s3ConfigString = `ssndigitalmedia/ssnpasskitapp/prod/${userEmail}/`;
+        const parts = s3ConfigString.split('/').filter(Boolean);
+        const bucketName = parts[0]; // "ssndigitalmedia"
+        const prefixPath = parts.slice(1).join('/'); // "ssnpasskitapp/prod/email@example.com"
+
         // Fetch S3 credentials dynamically
         const secrets = await getSecrets();
 
         const s3Client = new S3Client({
-            region: REGION,
+            region: config.REGION,
             credentials: {
                 accessKeyId: secrets.s3key || secrets.AWS_ACCESS_KEY_ID || "MOCK_ACCESS_KEY",
                 secretAccessKey: secrets.s3secret || secrets.AWS_SECRET_ACCESS_KEY || "MOCK_SECRET_KEY",
             },
         });
 
-        // Generate a unique pass name
-        const id = crypto.randomUUID();
+        // Check the 10-pass limit
+        try {
+            const listCommand = new ListObjectsV2Command({
+                Bucket: bucketName,
+                Prefix: prefixPath.endsWith('/') ? prefixPath : `${prefixPath}/`,
+            });
+            const listResponse = await s3Client.send(listCommand);
+            const passCount = listResponse.KeyCount || 0;
+            
+            if (passCount >= config.MAX_PASSES) {
+                return NextResponse.json({ error: `You have reached the limit of ${config.MAX_PASSES} passes. Please delete an existing pass before creating a new one.` }, { status: 403 });
+            }
+        } catch (listErr) {
+            console.warn("Could not fetch pass count:", listErr);
+        }
+
+        // Generate a 4-digit random pass name
+        const id = Math.floor(1000 + Math.random() * 9000).toString();
         const rawFilename = `pass-${id}.pkpass`;
         const cleanFilename = rawFilename.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '');
 
