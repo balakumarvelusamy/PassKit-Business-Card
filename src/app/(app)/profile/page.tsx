@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import "../home.css";
 
 export default function ProfilePage() {
@@ -93,6 +94,12 @@ export default function ProfilePage() {
                                 {isSending ? "Sending..." : "Send Message"}
                             </button>
                         </form>
+                    </div>
+
+                    <div style={{ marginTop: "2rem", textAlign: "center", paddingTop: "1.5rem", borderTop: "1px solid var(--border)" }}>
+                        <Link href="/privacypolicy" style={{ color: "var(--foreground-muted)", textDecoration: "underline", fontSize: "0.85rem", transition: "color 0.2s" }} onMouseOver={(e) => e.currentTarget.style.color = "var(--foreground)"} onMouseOut={(e) => e.currentTarget.style.color = "var(--foreground-muted)"}>
+                            View Privacy Policy
+                        </Link>
                     </div>
                 </div>
             </div>

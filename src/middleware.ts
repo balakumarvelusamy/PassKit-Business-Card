@@ -7,6 +7,7 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || process.en
 export async function middleware(request: NextRequest) {
     const token = request.cookies.get("auth_token")?.value;
     const isLoginPage = request.nextUrl.pathname.startsWith("/login");
+    const isPrivacyPolicy = request.nextUrl.pathname.startsWith("/privacypolicy");
     const isAuthApi = request.nextUrl.pathname.startsWith("/api/auth");
 
     // Allow auth API routes
@@ -14,8 +15,8 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // If there's no token and we're not on the login page, redirect to login
-    if (!token && !isLoginPage) {
+    // If there's no token and we're not on the login page or public pages, redirect to login
+    if (!token && !isLoginPage && !isPrivacyPolicy) {
         return NextResponse.redirect(new URL("/login", request.url));
     }
 
